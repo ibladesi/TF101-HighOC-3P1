@@ -2254,10 +2254,6 @@ static int mmu_alloc_roots(struct kvm_vcpu *vcpu)
 		return 0;
 	}
 	direct = !is_paging(vcpu);
-
-	if (mmu_check_root(vcpu, root_gfn))
-		return 1;
-
 	for (i = 0; i < 4; ++i) {
 		hpa_t root = vcpu->arch.mmu.pae_root[i];
 
@@ -2269,13 +2265,13 @@ static int mmu_alloc_roots(struct kvm_vcpu *vcpu)
 				continue;
 			}
 			root_gfn = pdptr >> PAGE_SHIFT;
-			if (mmu_check_root(vcpu, root_gfn))
-				return 1;
 		} else if (vcpu->arch.mmu.root_level == 0)
 			root_gfn = 0;
+		if (mmu_check_root(vcpu, root_gfn))
+			return 1;
 		if (tdp_enabled) {
 			direct = 1;
-			root_gfn = i << (30 - PAGE_SHIFT);
+			root_gfn = i << 30;
 		}
 		spin_lock(&vcpu->kvm->mmu_lock);
 		kvm_mmu_free_some_pages(vcpu);

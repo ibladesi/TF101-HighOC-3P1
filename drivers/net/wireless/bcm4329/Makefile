@@ -7,8 +7,7 @@ DHDCFLAGS = -DLINUX -DBCMDRIVER -DBCMDONGLEHOST -DDHDTHREAD -DBCMWPA2         \
 	-DDHD_DEBUG_TRAP -DSOFTAP -DEMBEDDED_PLATFORM -DARP_OFFLOAD_SUPPORT   \
 	-DPKT_FILTER_SUPPORT -DSET_RANDOM_MAC_SOFTAP -DCSCAN                  \
 	-DKEEP_ALIVE -DPNO_SUPPORT                                            \
-	-Idrivers/net/wireless/bcm4329 -Idrivers/net/wireless/bcm4329/include \
-	-Wno-array-bounds
+	-Idrivers/net/wireless/bcm4329 -Idrivers/net/wireless/bcm4329/include
 
 ifeq ($(CONFIG_BCM4329_WIFI_CONTROL_FUNC),y)
 DHDCFLAGS += -DCONFIG_WIFI_CONTROL_FUNC

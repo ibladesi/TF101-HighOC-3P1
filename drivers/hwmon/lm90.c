@@ -163,6 +163,7 @@ static struct lm90_data *lm90_update_device(struct device *dev);
 static const struct i2c_device_id lm90_id[] = {
 	{ "adm1032", adm1032 },
 	{ "adt7461", adt7461 },
+        { "adt7461a", adt7461 },
 	{ "lm90", lm90 },
 	{ "lm86", lm86 },
 	{ "lm89", lm86 },
@@ -727,6 +728,11 @@ static int lm90_detect(struct i2c_client *new_client,
 		 && (reg_config1 & 0x1B) == 0x00
 		 && reg_convrate <= 0x0A) {
 			name = "adt7461";
+                } else
+                if (chip_id == 0x57 /* ADT7461A, NCT1008 */
+                && (reg_config1 & 0x1B) == 0x00
+                && reg_convrate <= 0x0A) {   
+                        name = "adt7461a";
 		}
 	} else
 	if (man_id == 0x4D) { /* Maxim */

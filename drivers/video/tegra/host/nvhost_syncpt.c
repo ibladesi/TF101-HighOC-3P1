@@ -163,17 +163,23 @@ void nvhost_syncpt_incr(struct nvhost_syncpt *sp, u32 id)
  * Main entrypoint for syncpoint value waits.
  */
 int nvhost_syncpt_wait_timeout(struct nvhost_syncpt *sp, u32 id,
-			u32 thresh, u32 timeout)
+			u32 thresh, u32 timeout, u32 *value)
 {
 	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
 	void *ref;
 	int err = 0;
 
+        if (value)
+                *value = 0;
+
 	BUG_ON(!check_max(sp, id, thresh));
 
 	/* first check cache */
-	if (nvhost_syncpt_min_cmp(sp, id, thresh))
+	if (nvhost_syncpt_min_cmp(sp, id, thresh)) {
+                if (value)
+                        *value = nvhost_syncpt_read_min(sp, id);
 		return 0;
+        }
 
 	/* keep host alive */
 	nvhost_module_busy(&syncpt_to_dev(sp)->mod);
@@ -181,8 +187,11 @@ int nvhost_syncpt_wait_timeout(struct nvhost_syncpt *sp, u32 id,
 	if (client_managed(id) || !nvhost_syncpt_min_eq_max(sp, id)) {
 		/* try to read from register */
 		u32 val = nvhost_syncpt_update_min(sp, id);
-		if ((s32)(val - thresh) >= 0)
+		if ((s32)(val - thresh) >= 0) {
+                        if (value)
+                                *value = val;
 			goto done;
+                }
 	}
 
 	if (!timeout) {
@@ -204,6 +213,8 @@ int nvhost_syncpt_wait_timeout(struct nvhost_syncpt *sp, u32 id,
 						nvhost_syncpt_min_cmp(sp, id, thresh),
 						check);
 		if (remain > 0 || nvhost_syncpt_min_cmp(sp, id, thresh)) {
+                        if (value)
+                                *value = nvhost_syncpt_read_min(sp, id);
 			err = 0;
 			break;
 		}
@@ -238,7 +249,7 @@ static const char *s_syncpt_names[32] = {
 
 const char *nvhost_syncpt_name(u32 id)
 {
-	BUG_ON(id > ARRAY_SIZE(s_syncpt_names));
+	BUG_ON(id >= ARRAY_SIZE(s_syncpt_names));
 	return s_syncpt_names[id];
 }
 
@@ -290,7 +301,7 @@ int nvhost_syncpt_wait_check(struct nvmap_client *nvmap,
 	while (waitchks) {
 		u32 syncpt, override;
 
-		BUG_ON(waitp->syncpt_id > NV_HOST1X_SYNCPT_NB_PTS);
+		BUG_ON(waitp->syncpt_id >= NV_HOST1X_SYNCPT_NB_PTS);
 
 		syncpt = atomic_read(&sp->min_val[waitp->syncpt_id]);
 		if (nvhost_syncpt_wrapping_comparison(syncpt, waitp->thresh)) {

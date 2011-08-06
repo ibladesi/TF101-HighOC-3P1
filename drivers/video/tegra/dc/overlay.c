@@ -162,10 +162,10 @@ static int tegra_overlay_set_windowattr(struct tegra_overlay_info *overlay,
 	win->out_h = flip_win->attr.out_h;
 
 	WARN_ONCE(win->out_x >= xres,
-		"%s:application window x offset exceeds display width(%d)\n",
+		"%s:application window x offset(%d) exceeds display width(%d)\n",
 		dev_name(&win->dc->ndev->dev), win->out_x, xres);
 	WARN_ONCE(win->out_y >= yres,
-		"%s:application window y offset exceeds display height(%d)\n",
+		"%s:application window y offset(%d) exceeds display height(%d)\n",
 		dev_name(&win->dc->ndev->dev), win->out_y, yres);
 	WARN_ONCE(win->out_x + win->out_w > xres && win->out_x < xres,
 		"%s:application window width(%d) exceeds display width(%d)\n",
@@ -201,7 +201,8 @@ static int tegra_overlay_set_windowattr(struct tegra_overlay_info *overlay,
 		nvhost_syncpt_wait_timeout(&overlay->ndev->host->syncpt,
 					   flip_win->attr.pre_syncpt_id,
 					   flip_win->attr.pre_syncpt_val,
-					   msecs_to_jiffies(500));
+					   msecs_to_jiffies(500),
+                                           NULL);
 	}
 
 	/* Store the blend state incase we need to reorder later */
@@ -622,6 +623,7 @@ static int tegra_overlay_release(struct inode *inode, struct file *filp)
 	list_del(&client->list);
 	spin_unlock_irqrestore(&client->dev->clients_lock, flags);
 
+        nvmap_client_put(client->user_nvmap);
 	put_task_struct(client->task);
 
 	kfree(client);

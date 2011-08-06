@@ -25,4 +25,4 @@ config TEGRA_JACK
 
 config HEADSET_FUNCTION
 	tristate "Headset detection function"
-        default n    
+        default y    

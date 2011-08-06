@@ -120,6 +120,16 @@ static int lux_ep103_table[64]={
 6449,7743,9295,11159,13396,16082,19307,23178,
 27826,33405,40103,48144,57797,69386,83298,100000};
 
+/* 100 - 1500 are tested */
+static int lux_ep102_table[64]={
+1,3,5,10,20,30,40,60,
+80,100,125,150,175,200,230,270,
+300,350,400,500,600,700,900,1100,
+1200,1400,1500,1500,1500,1500,1500,1500,
+1500,1500,1500,1500,1500,1500,1500,1500,
+1500,1500,1500,1500,1500,1500,1500,1500,
+1500,1500,1500,1500,1500,1500,1500,1500,
+1500,1500,1500,1500,1500,1500,1500,1500};
 
 struct al3000a_data {
 	struct device           *hwmon_dev;
@@ -295,7 +305,7 @@ void al3000a_dump_reg(struct i2c_client *client)
 
 	for(offset=AL3000A_REG_CONFIGURATION; offset<=AL3000A_MAX_REGS; offset++){
 		al3000a_read_data(client, offset, sizeof(value), &value);
-		//printk("al3000a:%s:[0x%02X]=0x%02X\n", __FUNCTION__, offset, value);
+		printk("al3000a:%s:[0x%02X]=0x%02X\n", __FUNCTION__, offset, value);
 	}
 	return;
 }
@@ -359,9 +369,13 @@ static int al3000a_Init(struct i2c_client *client)
 	printk("ASUSGetProjectID() = %d \n", project_id);
 	switch(project_id){
 		case 101:
-		case 102:
 		for(i=0;i<64;i++){
 			lux_table[i] = lux_reduce_ep101_table[i];		
+		}
+		break;
+		case 102:
+		for(i=0;i<64;i++){
+			lux_table[i] = lux_ep102_table[i];
 		}
 		break;
 		case 103:
@@ -450,7 +464,7 @@ static struct attribute *al3000a_attr[] = {
 
 static irqreturn_t al3000a_interrupt_handler(int irq, void *dev_id)
 {
-	//printk("Light sensor: %s\n", __FUNCTION__);
+	/*printk("Light sensor: %s\n", __FUNCTION__);*/
 	struct al3000a_data * data= dev_id;
 
 	schedule_work(&data->work);
@@ -473,7 +487,7 @@ static void al3000a_work(struct work_struct *work)
 	else{
 		count = count & 0x3F;
 		data->lux = lux_table[count];
-		//printk("lux value is : %d \n", data->lux);
+		/*printk("lux value is : %d \n", data->lux);*/
 	}
 }
 

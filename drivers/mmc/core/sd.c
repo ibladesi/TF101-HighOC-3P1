@@ -779,6 +779,11 @@ static int mmc_sd_resume(struct mmc_host *host)
 		err = mmc_sd_init_card(host, host->ocr, host->card);
 
 		if (err) {
+			if(gpio_get_value(SD_CARD_DETECT) == 1)
+			{
+				MMC_printk("%s: Stop sd init, gpio_%d %d", mmc_hostname(host), SD_CARD_DETECT, gpio_get_value(SD_CARD_DETECT));
+				break;
+			}
 			printk(KERN_ERR "%s: Re-init card rc = %d (retries = %d)\n",
 			       mmc_hostname(host), err, retries);
 			mdelay(5);

@@ -306,7 +306,8 @@ static int aes_hw_init(struct tegra_aes_engine *engine)
 		if (ret < 0) {
 			dev_err(dd->dev, "%s: iclock enable fail(%d)\n",
 			__func__, ret);
-			clk_disable(engine->pclk);
+			if (engine->pclk)
+                                clk_disable(engine->pclk);
 			return ret;
 		}
 	}
@@ -660,7 +661,7 @@ static int tegra_aes_setkey(struct crypto_ablkcipher *tfm, const u8 *key,
 	struct tegra_aes_slot *key_slot;
 
 	if (!ctx || !dd) {
-		dev_err(dd->dev, "ctx=0x%x, dd=0x%x\n",
+		pr_err("ctx=0x%x, dd=0x%x\n",
 			(unsigned int)ctx, (unsigned int)dd);
 		return -EINVAL;
 	}
@@ -1134,29 +1135,29 @@ static int tegra_aes_probe(struct platform_device *pdev)
 	dd->bsea.res_id = TEGRA_ARB_BSEA;
 
 	dd->bsev.pclk = clk_get(dev, "bsev");
-	if (!dd->bsev.pclk) {
-		dev_err(dev, "pclock intialization failed.\n");
+	if (IS_ERR(dd->bsev.pclk)) {
+                dev_err(dev, "v: pclock intialization failed.\n");
 		err = -ENODEV;
 		goto out;
 	}
 
 	dd->bsev.iclk = clk_get(dev, "vde");
-	if (!dd->bsev.iclk) {
-		dev_err(dev, "iclock intialization failed.\n");
+	if (IS_ERR(dd->bsev.pclk)) {
+                dev_err(dev, "v: pclock intialization failed.\n");
 		err = -ENODEV;
 		goto out;
 	}
 
 	dd->bsea.pclk = clk_get(dev, "bsea");
-	if (!dd->bsea.pclk) {
-		dev_err(dev, "pclock intialization failed.\n");
+	if (IS_ERR(dd->bsea.pclk)) {
+                dev_err(dev, "a: pclock intialization failed.\n");
 		err = -ENODEV;
 		goto out;
 	}
 
 	dd->bsea.iclk = clk_get(dev, "sclk");
-	if (!dd->bsea.iclk) {
-		dev_err(dev, "iclock intialization failed.\n");
+	 if (IS_ERR(dd->bsea.iclk)) {
+                dev_err(dev, "a: iclock intialization failed.\n");
 		err = -ENODEV;
 		goto out;
 	}

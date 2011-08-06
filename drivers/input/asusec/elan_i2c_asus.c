@@ -212,6 +212,7 @@ static void HandleTapProcessing(struct elantech_data *etd, edge_type edge,int fi
 
 }
 
+
 static void timertapprocessing(unsigned long data)
 {
 	struct asusec_chip *ec_chip = (struct asusec_chip *)data;
@@ -234,9 +235,11 @@ static void timertapprocessing(unsigned long data)
 		input_report_key(dev, BTN_LEFT,0);
 		input_sync(dev);
 		etd->tap_num=NO_FINGER_ON_TOUCHPAD;
-	}else {
-		etd->tap_num=NO_FINGER_ON_TOUCHPAD;
-	}
+       
+        }else {
+
+               etd->tap_num=NO_FINGER_ON_TOUCHPAD;
+        }
 
 }
 

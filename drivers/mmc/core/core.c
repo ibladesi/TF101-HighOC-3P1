@@ -233,7 +233,7 @@ void mmc_wait_for_req(struct mmc_host *host, struct mmc_request *mrq)
 	host->opcode = mrq->cmd->opcode;
 
 	if (!strcmp(mmc_hostname(host), SDHOST_STRING) && gpio_get_value(SD_CARD_DETECT) == 1) {
-		MMC_printk("%s:removed, CMD%u stop", mmc_hostname(host), mrq->cmd->opcode);
+		MMC_DBG("%s:removed, CMD%u stop", mmc_hostname(host), mrq->cmd->opcode);
 		mrq->cmd->error = -ENOMEDIUM;
 		return;
 	}
@@ -1053,7 +1053,7 @@ int mmc_resume_bus(struct mmc_host *host)
 		host->bus_ops->resume(host);
 	}
 
-	if (host->bus_ops->detect && !host->bus_dead)
+	if (host->bus_ops->detect && !host->bus_dead && strcmp(mmc_hostname(host), "mmc1"))
 		host->bus_ops->detect(host);
 
 	mmc_bus_put(host);

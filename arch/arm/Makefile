@@ -108,8 +108,21 @@ AFLAGS_THUMB2	:=$(CFLAGS_THUMB2) -Wa$(comma)-mthumb
 endif
 
 # Need -Uarm for gcc < 3.x
-KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_THUMB2) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
-KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_THUMB2) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
+KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_THUMB2) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -Uarm
+KBUILD_CFLAGS	+= $(cc-option,-mfpu=vfpv3-d16)
+ifeq ($(call cc-option-yn,-mfloat-abi=softfp),y)
+KBUILD_CFLAGS	+= -mfloat-abi=softfp
+else
+KBUILD_CFLAGS	+= -msoft-float
+endif
+
+KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_THUMB2) $(arch-y) $(tune-y) -include asm/unified.h
+KBUILD_AFLAGS	+= $(as-option,-mfpu=vfpv3-d16)
+ifeq ($(call as-option-yn,-mfloat-abi=softfp),y)
+KBUILD_AFLAGS	+= -mfloat-abi=softfp
+else
+KBUILD_AFLAGS	+= -msoft-float
+endif
 
 CHECKFLAGS	+= -D__arm__
 
@@ -117,7 +130,7 @@ CHECKFLAGS	+= -D__arm__
 head-y		:= arch/arm/kernel/head$(MMUEXT).o arch/arm/kernel/init_task.o
 textofs-y	:= 0x00008000
 textofs-$(CONFIG_ARCH_CLPS711X) := 0x00028000
-# We don't want the htc bootloader to corrupt kernel during resume
+# We don't want the htc bootloader to corrupt kernel during resume.. Nor do we want a locked one.. tehehe
 textofs-$(CONFIG_PM_H1940)      := 0x00108000
 # SA1111 DMA bug: we don't want the kernel to live in precious DMA-able memory
 ifeq ($(CONFIG_ARCH_SA1100),y)
