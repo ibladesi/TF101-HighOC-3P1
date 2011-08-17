@@ -178,9 +178,9 @@ static const struct tegra_emc_table ventana_emc_tables_elpida_300Mhz[] =  {
 		}
 	},
 	{
-		.rate = 166000,   /* SDRAM frequency */
+		.rate = 150000,   /* SDRAM frequency */
 		.regs = {
-			0x0000000a,   /* RC */
+			0x00000009,   /* RC */
 			0x00000014,   /* RFC */
 			0x00000007,   /* RAS */
 			0x00000003,   /* RP */
@@ -239,8 +239,8 @@ static const struct tegra_emc_table ventana_emc_tables_elpida_300Mhz[] =  {
 			0x00000005,   /* W2R */
 			0x00000003,   /* R2P */
 			0x00000009,   /* W2P */
-			0x00000006,   /* RD_RCD */
-			0x00000006,   /* WR_RCD */
+			0x00000007,   /* RD_RCD */
+			0x00000007,   /* WR_RCD */
 			0x00000003,   /* RRD */
 			0x00000003,   /* REXT */
 			0x00000002,   /* WDV */
@@ -248,21 +248,21 @@ static const struct tegra_emc_table ventana_emc_tables_elpida_300Mhz[] =  {
 			0x00000003,   /* QRST */
 			0x00000009,   /* QSAFE */
 			0x0000000c,   /* RDV */
-			0x0000045f,   /* REFRESH */
+			0x000004DC,   /* REFRESH */
 			0x00000000,   /* BURST_REFRESH_NUM */
 			0x00000004,   /* PDEX2WR */
 			0x00000004,   /* PDEX2RD */
-			0x00000006,   /* PCHG2PDEN */
+			0x00000007,   /* PCHG2PDEN */
 			0x00000008,   /* ACT2PDEN */
 			0x00000001,   /* AR2PDEN */
 			0x0000000e,   /* RW2PDEN */
-			0x0000002A,   /* TXSR */
+			0x0000002F,   /* TXSR */
 			0x00000003,   /* TCKE */
-			0x0000000F,   /* TFAW */
-			0x00000007,   /* TRPAB */
+			0x00000010,   /* TFAW */
+			0x00000008,   /* TRPAB */
 			0x00000005,   /* TCLKSTABLE */
 			0x00000002,   /* TCLKSTOP */
-			0x000004E0,   /* TREFBW */
+			0x0000056A,   /* TREFBW */
 			0x00000005,   /* QUSE_EXTRA */
 			0x00000002,   /* FBIO_CFG6 */
 			0x00000000,   /* ODT_WRITE */
@@ -272,7 +272,7 @@ static const struct tegra_emc_table ventana_emc_tables_elpida_300Mhz[] =  {
 			0x007e0010,   /* DLL_XFORM_DQS */
 			0x00000000,   /* DLL_XFORM_QUSE */
 			0x00000000,   /* ZCAL_REF_CNT */
-			0x0000001B,   /* ZCAL_WAIT_CNT */
+			0x0000001E,   /* ZCAL_WAIT_CNT */
 			0x00000000,   /* AUTO_CAL_INTERVAL */
 			0x00000000,   /* CFG_CLKTRIM_0 */
 			0x00000000,   /* CFG_CLKTRIM_1 */
